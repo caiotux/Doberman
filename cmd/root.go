@@ -13,10 +13,10 @@ func Execute() {
 }
 
 func printHelp() {
-	fmt.Println(Banner)
+	ShowBanner()
 	fmt.Println(` 
 	
-Usage :
+Usage
 	doberman status
 	doberman list 
 	doberman new 
