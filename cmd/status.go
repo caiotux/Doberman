@@ -74,7 +74,7 @@ var statusCmd = &cobra.Command{
 		}
 
 		fmt.Printf(
-			"%s\n --> %s <-- still awake?\n  %s\n",
+			"%s\n --> %s <-- Are you still awake?\n  %s\n",
 			uptime,
 			now,
 			osName,
