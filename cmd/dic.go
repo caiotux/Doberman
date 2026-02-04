@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"io"
+	"os"
+	"strings"
 
 	"github.com/caiotux/Doberman/internal/gemini"
 	"github.com/spf13/cobra"
@@ -14,7 +17,43 @@ var dicCmd = &cobra.Command{
 	Short: "Doberman CLI useing Gemini API to generate text based on a prompt",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		prompt := args[0]
+		var prompt string
+
+		stat, err := os.Stdin.Stat()
+		if err != nil {
+			return err
+		}
+
+		hasStdin := (stat.Mode() & os.ModeCharDevice) == 0
+
+		var stdinContent string
+		if hasStdin {
+			b, err := io.ReadAll(os.Stdin)
+			if err != nil {
+				return err
+			}
+			stdinContent = strings.TrimSpace(string(b))
+		}
+
+		if len(args) > 0 {
+			prompt = strings.Join(args, " ")
+		}
+
+		switch {
+		case stdinContent != "" && prompt != "":
+			prompt = fmt.Sprintf(
+				"Context:\n%s\n\nQuestion:\n%s",
+				stdinContent,
+				prompt,
+			)
+
+		case stdinContent != "":
+			prompt = stdinContent
+		}
+
+		if prompt == "" {
+			return fmt.Errorf("not prompt provided (args or stdin)")
+		}
 
 		client, err := gemini.NewClient()
 		if err != nil {

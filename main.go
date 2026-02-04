@@ -1,7 +1,18 @@
 package main
 
-import "github.com/caiotux/Doberman/cmd"
+import (
+	"log"
+
+	"github.com/caiotux/Doberman/cmd"
+	"github.com/joho/godotenv"
+)
 
 func main() {
+
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found")
+	}
+
 	cmd.Execute()
+
 }
